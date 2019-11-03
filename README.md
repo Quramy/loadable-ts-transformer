@@ -18,7 +18,7 @@ $ npm install loadable-ts-transformer ts-loader webpack typescript -D
 
 ```js
 /* webpack.config.js */
-const { loadableTransformer } = require('ts-loadable-transformer');
+const { loadableTransformer } = require('loadable-ts-transformer');
 
 module.exports = {
     ...
