@@ -1,3 +1,4 @@
+![](https://github.com/quramy/loadable-ts-transformer/workflows/build/badge.svg)
 # loadable-ts-transformer
 
 A TypeScript custom transformer for server side rendering with [loadable-components](https://github.com/smooth-code/loadable-components) .
