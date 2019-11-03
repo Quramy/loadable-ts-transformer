@@ -1,4 +1,4 @@
-import ts from "typescript";
+import ts from 'typescript';
 
 export function getImportArg(callNode: ts.CallExpression): ts.Node {
   return callNode.arguments[0];
@@ -10,11 +10,16 @@ export function getLeadingComments(node: ts.Node) {
   if (!ranges) return [] as string[];
   const ret: string[] = [];
   for (const range of ranges) {
-    ret.push(src.getSourceFile().getFullText().slice(range.pos, range.end));
+    ret.push(
+      src
+        .getSourceFile()
+        .getFullText()
+        .slice(range.pos, range.end),
+    );
   }
   return ret.map(comment => {
-    if (comment.startsWith("//")) return comment.slice(2);
-    if (comment.startsWith("/*")) return comment.slice(2, comment.length - 2);
-    throw new Error("Invalid comment");
+    if (comment.startsWith('//')) return comment.slice(2);
+    if (comment.startsWith('/*')) return comment.slice(2, comment.length - 2);
+    throw new Error('Invalid comment');
   });
 }

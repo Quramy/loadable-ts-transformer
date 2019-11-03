@@ -1,5 +1,5 @@
-import ts from "typescript";
-import { getImportArg } from "../util";
+import ts from 'typescript';
+import { getImportArg } from '../util';
 
 const template = (ID: string) => `x = {
   resolve() {
@@ -16,11 +16,12 @@ function getCallValue(callNode: ts.CallExpression) {
   if (ts.isStringLiteral(importArg) || ts.isTemplateLiteral(importArg) || ts.isTemplateExpression(importArg)) {
     return importArg.getText();
   }
-  throw new Error("invalid import argument");
+  throw new Error('invalid import argument');
 }
 
 export default function resolveProperty(callNode: ts.CallExpression) {
   const id = getCallValue(callNode);
-  const tmp = ts.createSourceFile("", template(id), ts.ScriptTarget.ESNext, false, ts.ScriptKind.TS);
-  return (((tmp.statements[0] as ts.ExpressionStatement).expression as ts.BinaryExpression).right as ts.ObjectLiteralExpression).properties[0];
+  const tmp = ts.createSourceFile('', template(id), ts.ScriptTarget.ESNext, false, ts.ScriptKind.TS);
+  return (((tmp.statements[0] as ts.ExpressionStatement).expression as ts.BinaryExpression)
+    .right as ts.ObjectLiteralExpression).properties[0];
 }

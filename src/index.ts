@@ -1,15 +1,15 @@
-import * as ts from "typescript";
-import chunkNameProperty from "./properties/chunk-name";
-import requireAsyncProperty from "./properties/require-async";
-import requireSyncProperty from "./properties/require-sync";
-import isReadyProperty from "./properties/is-ready";
-import resolveProperty from "./properties/resolve";
+import * as ts from 'typescript';
+import chunkNameProperty from './properties/chunk-name';
+import requireAsyncProperty from './properties/require-async';
+import requireSyncProperty from './properties/require-sync';
+import isReadyProperty from './properties/is-ready';
+import resolveProperty from './properties/resolve';
 
 function isLoadableNode(node: ts.Node): node is ts.CallExpression {
   if (!ts.isCallExpression(node)) return false;
   const identifier = node.expression;
   if (!ts.isIdentifier(identifier)) return false;
-  if (identifier.text !== "loadable") return false;
+  if (identifier.text !== 'loadable') return false;
   return true;
 }
 
@@ -26,7 +26,9 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
   return ret;
 }
 
-function getFuncNode(loadableCallExpressionNode: ts.CallExpression): ts.FunctionExpression | ts.ArrowFunction | undefined {
+function getFuncNode(
+  loadableCallExpressionNode: ts.CallExpression,
+): ts.FunctionExpression | ts.ArrowFunction | undefined {
   const arg = loadableCallExpressionNode.arguments[0];
   if (!arg) return;
   if (!ts.isArrowFunction(arg) && !ts.isFunctionExpression(arg)) return;
@@ -45,25 +47,26 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     // Multiple imports call is not supported
     if (imports.length > 1) {
-      throw new Error(
-        'loadable: multiple import calls inside `loadable()` function are not supported.',
-      )
+      throw new Error('loadable: multiple import calls inside `loadable()` function are not supported.');
     }
 
     const [callNode] = imports;
 
     const funcNode = getFuncNode(node);
     if (!funcNode) {
-      throw new Error("not implemented");
+      throw new Error('not implemented');
     }
 
-    const obj = ts.createObjectLiteral([
-      chunkNameProperty(callNode),
-      isReadyProperty(),
-      requireAsyncProperty(funcNode),
-      requireSyncProperty(),
-      resolveProperty(callNode),
-    ], true);
+    const obj = ts.createObjectLiteral(
+      [
+        chunkNameProperty(callNode),
+        isReadyProperty(),
+        requireAsyncProperty(funcNode),
+        requireSyncProperty(),
+        resolveProperty(callNode),
+      ],
+      true,
+    );
     return ts.updateCall(node, node.expression, undefined, [obj]);
   }
 

@@ -1,4 +1,4 @@
-import ts from "typescript";
+import ts from 'typescript';
 
 const template = `x = {
   requireSync(props) {
@@ -13,6 +13,7 @@ const template = `x = {
 }`;
 
 export default function requireSyncProperty(): ts.ObjectLiteralElementLike {
-  const tmp = ts.createSourceFile("", template, ts.ScriptTarget.ESNext, false, ts.ScriptKind.TS);
-  return (((tmp.statements[0] as ts.ExpressionStatement).expression as ts.BinaryExpression).right as ts.ObjectLiteralExpression).properties[0];
+  const tmp = ts.createSourceFile('', template, ts.ScriptTarget.ESNext, false, ts.ScriptKind.TS);
+  return (((tmp.statements[0] as ts.ExpressionStatement).expression as ts.BinaryExpression)
+    .right as ts.ObjectLiteralExpression).properties[0];
 }

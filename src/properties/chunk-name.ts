@@ -1,7 +1,6 @@
-import vm from 'vm'
-import ts from "typescript";
-import { getImportArg, getLeadingComments } from "../util";
-
+import vm from 'vm';
+import ts from 'typescript';
+import { getImportArg, getLeadingComments } from '../util';
 
 const JS_PATH_REGEXP = /^[./]+|(\.js$)/g;
 const MATCH_LEFT_HYPHENS_REPLACE_REGEX = /^-/g;
@@ -23,12 +22,10 @@ function writeWebpackCommentValues(values: any) {
   try {
     const str = Object.keys(values)
       .map(key => `${key}: ${JSON.stringify(values[key])}`)
-      .join(', ')
-    return ` ${str} `
+      .join(', ');
+    return ` ${str} `;
   } catch (e) {
-    throw Error(
-      `compilation error while processing: /*${values}*/: ${e.message}`,
-    )
+    throw Error(`compilation error while processing: /*${values}*/: ${e.message}`);
   }
 }
 
@@ -39,23 +36,23 @@ function getChunkNameComment(importArg: ts.Node) {
 }
 
 function getRawChunkNameFromCommments(importArg: ts.Node) {
-  const chunkNameComment = getChunkNameComment(importArg)
-  if (!chunkNameComment) return null
-  return readWebpackCommentValues(chunkNameComment)
+  const chunkNameComment = getChunkNameComment(importArg);
+  if (!chunkNameComment) return null;
+  return readWebpackCommentValues(chunkNameComment);
 }
 
 function moduleToChunk(str: string) {
-  if (typeof str !== "string") return "";
+  if (typeof str !== 'string') return '';
   return str
-    .replace(JS_PATH_REGEXP, "")
-    .replace(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX, "-")
-    .replace(WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX, "");
+    .replace(JS_PATH_REGEXP, '')
+    .replace(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX, '-')
+    .replace(WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX, '');
 }
 
 function generateChunkNameNode(callPath: ts.CallExpression) {
-  const importArg = getImportArg(callPath)
+  const importArg = getImportArg(callPath);
   if (ts.isTemplateExpression(importArg)) {
-    throw new Error("not implementd");
+    throw new Error('not implementd');
     // return t.templateLiteral(
     //   importArg.node.quasis.map((quasi, index) =>
     //     transformQuasi(
@@ -69,9 +66,8 @@ function generateChunkNameNode(callPath: ts.CallExpression) {
   } else if (ts.isStringLiteral(importArg)) {
     return ts.createStringLiteral(moduleToChunk(importArg.getText().slice(1, -1)));
   }
-  throw new Error("not implementd");
+  throw new Error('not implementd');
 }
-
 
 function getExistingChunkNameComment(callPath: ts.CallExpression) {
   const importArg = getImportArg(callPath);
@@ -80,32 +76,35 @@ function getExistingChunkNameComment(callPath: ts.CallExpression) {
 }
 
 function isAgressiveImport(callNode: ts.CallExpression) {
-  const importArg = getImportArg(callNode)
-  return (
-    ts.isTemplateExpression(importArg) && importArg.templateSpans.length > 0
-  );
+  const importArg = getImportArg(callNode);
+  return ts.isTemplateExpression(importArg) && importArg.templateSpans.length > 0;
 }
 
 function addOrReplaceChunkNameComment(callPath: ts.CallExpression, values: any) {
-  const importArg = getImportArg(callPath)
+  const importArg = getImportArg(callPath);
   // const chunkNameComment = getChunkNameComment(importArg)
   // if (chunkNameComment) {
   //   chunkNameComment.remove()
   // }
 
-  ts.addSyntheticLeadingComment(importArg, ts.SyntaxKind.MultiLineCommentTrivia, writeWebpackCommentValues(values), true)
+  ts.addSyntheticLeadingComment(
+    importArg,
+    ts.SyntaxKind.MultiLineCommentTrivia,
+    writeWebpackCommentValues(values),
+    true,
+  );
 }
 
 function replaceChunkName(callPath: ts.CallExpression) {
-  const agressiveImport = isAgressiveImport(callPath)
-  const values = getExistingChunkNameComment(callPath)
+  const agressiveImport = isAgressiveImport(callPath);
+  const values = getExistingChunkNameComment(callPath);
 
   // if (!agressiveImport && values) {
   //   addOrReplaceChunkNameComment(callPath, values)
   //   return t.stringLiteral(values.webpackChunkName)
   // }
 
-  let chunkNameNode = generateChunkNameNode(callPath)
+  let chunkNameNode = generateChunkNameNode(callPath);
   let webpackChunkName: string;
 
   // if (t.isTemplateLiteral(chunkNameNode)) {
@@ -115,7 +114,7 @@ function replaceChunkName(callPath: ts.CallExpression) {
   webpackChunkName = chunkNameNode.text;
   // }
 
-  addOrReplaceChunkNameComment(callPath, { webpackChunkName })
+  addOrReplaceChunkNameComment(callPath, { webpackChunkName });
   return chunkNameNode;
 }
 
@@ -124,16 +123,11 @@ export default function chunkNameProperty(callNode: ts.CallExpression) {
     [],
     [],
     undefined,
-    "chunkName",
+    'chunkName',
     undefined,
     [],
     [],
     undefined,
-    ts.createBlock(
-      [
-        ts.createReturn(replaceChunkName(callNode)),
-      ],
-      true,
-    ),
+    ts.createBlock([ts.createReturn(replaceChunkName(callNode))], true),
   );
 }
