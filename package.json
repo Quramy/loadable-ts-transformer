@@ -1,6 +1,6 @@
 {
   "name": "loadable-ts-transformer",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "TypeScript custom transformer for lodable-components SSR",
   "main": "lib/index.js",
   "scripts": {
@@ -8,7 +8,13 @@
     "build": "tsc",
     "test": "jest"
   },
-  "keywords": ["loadble-components", "React", "TypeScript", "Plugin", "Server Side Rendering"],
+  "keywords": [
+    "loadble-components",
+    "React",
+    "TypeScript",
+    "Plugin",
+    "Server Side Rendering"
+  ],
   "author": "Yosuke Kurami",
   "license": "MIT",
   "peerDependencies": {
