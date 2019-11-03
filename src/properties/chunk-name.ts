@@ -1,6 +1,6 @@
 import vm from 'vm';
 import ts from 'typescript';
-import { getImportArg, getLeadingComments } from '../util';
+import { getImportArg, getLeadingComments, createObjectMethod } from '../util';
 
 const JS_PATH_REGEXP = /^[./]+|(\.js$)/g;
 const MATCH_LEFT_HYPHENS_REPLACE_REGEX = /^-/g;
@@ -91,7 +91,7 @@ function addOrReplaceChunkNameComment(callPath: ts.CallExpression, values: any) 
     importArg,
     ts.SyntaxKind.MultiLineCommentTrivia,
     writeWebpackCommentValues(values),
-    true,
+    false,
   );
 }
 
@@ -119,15 +119,5 @@ function replaceChunkName(callPath: ts.CallExpression) {
 }
 
 export default function chunkNameProperty(callNode: ts.CallExpression) {
-  return ts.createMethod(
-    [],
-    [],
-    undefined,
-    'chunkName',
-    undefined,
-    [],
-    [],
-    undefined,
-    ts.createBlock([ts.createReturn(replaceChunkName(callNode))], true),
-  );
+  return createObjectMethod('chunkName', [], ts.createBlock([ts.createReturn(replaceChunkName(callNode))], true));
 }

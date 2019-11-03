@@ -1,30 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`transformer simple import should transform path into "chunk-friendly" name 1`] = `
-"loadable({
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
     chunkName() {
         return \\"foo-bar\\";
     },
     isReady(props) {
-        if (typeof __webpack_modules__ !== \\"undefined\\") {
-            return !!__webpack_modules__[this.resolve(props)];
-        }
-        return false;
+        return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"foo-bar\\" */
-    '../foo/bar'),
+    requireAsync: () => import(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar'),
     requireSync(props) {
-        const id = this.resolve(props);
-        if (typeof __webpack_require__ !== \\"undefined\\") {
-            return __webpack_require__(id);
-        }
-        return eval(\\"module.require\\")(id);
+        return __loadable_requireSync__(this, props);
     },
     resolve() {
-        if (require.resolveWeak) {
-            return require.resolveWeak(\\"../foo/bar\\");
-        }
-        return eval(\\"require.resolve\\")(\\"../foo/bar\\");
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar');
     }
 });
 "
