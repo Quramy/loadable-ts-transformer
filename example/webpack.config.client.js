@@ -8,10 +8,16 @@ module.exports = () => {
     output: {
       path: path.resolve(__dirname, 'public'),
       publicPath: '/assets/',
-      filename: '[name].[hash].js',
+      filename: '[name].[chunkhash].js',
     },
     entry: {
       main: path.resolve(__dirname, 'src/client.tsx'),
+    },
+    optimization: {
+      splitChunks: {
+        name: 'vendor',
+        chunks: 'initial',
+      },
     },
     plugins: [
       new LoadablePlugin(),

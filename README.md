@@ -11,7 +11,7 @@ This transformer is an alternative option for ts-loader user. It works as well a
 ### Install
 
 ```sh
-$ npm install loaable-ts-transformer ts-loader webpack typescript -D
+$ npm install loadable-ts-transformer ts-loader webpack typescript -D
 ```
 
 ### Configure webpack

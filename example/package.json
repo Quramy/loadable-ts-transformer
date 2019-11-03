@@ -1,13 +1,10 @@
 {
   "private": true,
   "name": "example",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "build:dev": "webpack --config webpack.config.client.js --mode development && webpack --config webpack.config.server.js --mode development",
-    "start": "yarn build:dev && node dist-server/server.js"
+    "build": "webpack --config webpack.config.client.js --mode production && webpack --config webpack.config.server.js --mode development",
+    "start": "yarn build && node dist-server/server.js"
   },
-  "keywords": [],
   "author": "Yosuke Kurami",
   "dependencies": {
     "@loadable/component": "^5.10.3",
