@@ -4,9 +4,17 @@ A TypeScript custom transformer for server side rendering with [loadable-compone
 
 ## Usage
 
+First of all, you should read https://www.smooth-code.com/open-source/loadable-components/docs/server-side-rendering/ .
+
+This transformer is an alternative option for ts-loader user. It works as well as `@loadable/babel-plugin` does.
+
+### Install
+
 ```sh
 $ npm install loaable-ts-transformer ts-loader webpack typescript -D
 ```
+
+### Configure webpack
 
 ```js
 /* webpack.config.js */
@@ -29,6 +37,8 @@ module.exports = {
     ...
 };
 ```
+
+**Remarks** This transformer compiles `import(...)` expression. So you should set tsconfig `--module` option to "ES2015" or "ESNext".
 
 ## License
 MIT

@@ -1,9 +1,11 @@
 {
   "name": "loadable-ts-transformer",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "TypeScript custom transformer for lodable-components SSR",
   "main": "lib/index.js",
   "scripts": {
+    "prepare": "tsc",
+    "build": "tsc",
     "test": "jest"
   },
   "keywords": ["loadble-components", "React", "TypeScript", "Plugin", "Server Side Rendering"],
