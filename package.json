@@ -1,0 +1,47 @@
+{
+  "name": "loadable-ts-transformer",
+  "version": "1.0.0",
+  "description": "TypeScript custom transformer for lodable-components SSR",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": ["loadble-components", "React", "TypeScript", "Plugin", "Server Side Rendering"],
+  "author": "Yosuke Kurami",
+  "license": "MIT",
+  "peerDependencies": {
+    "typescript": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.21",
+    "@types/node": "^12.12.5",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testMatch": [
+      "**/__tests__/*.(ts|tsx)",
+      "**/*.test.(ts|tsx)"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "\\.d\\.ts$",
+      "lib/.*"
+    ],
+    "testURL": "http://localhost"
+  }
+}
