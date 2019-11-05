@@ -41,5 +41,25 @@ describe('transformer', () => {
         expect(result).toMatchSnapshot();
       });
     });
+
+    describe('without "webpackChunkName" comment', () => {
+      it('should add it', () => {
+        const result = testPlugin(`
+          loadable(() => import('./ModA'))
+        `);
+
+        expect(result).toMatchSnapshot();
+      });
+    });
+
+    describe('in a complex promise', () => {
+      it('should work', () => {
+        const result = testPlugin(`
+          loadable(() => timeout(import('./ModA'), 2000))
+        `);
+
+        expect(result).toMatchSnapshot();
+      });
+    });
   });
 });

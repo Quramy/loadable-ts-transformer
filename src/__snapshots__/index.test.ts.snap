@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transformer simple import in a complex promise should work 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \\"ModA\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => timeout(import(/* webpackChunkName: \\"ModA\\" */ './ModA'), 2000),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
+    }
+});
+"
+`;
+
 exports[`transformer simple import should transform path into "chunk-friendly" name 1`] = `
 "function __loadable_isReady__(self, props) {
   if (typeof __webpack_modules__ !== \\"undefined\\") {
@@ -94,6 +127,39 @@ loadable({
     },
     resolve() {
         return require.resolveWeak ? require.resolveWeak(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA');
+    }
+});
+"
+`;
+
+exports[`transformer simple import without "webpackChunkName" comment should add it 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \\"ModA\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => import(/* webpackChunkName: \\"ModA\\" */ './ModA'),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
     }
 });
 "
