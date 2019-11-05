@@ -23,5 +23,15 @@ describe('transformer', () => {
 
       expect(result).toMatchSnapshot();
     });
+
+    describe('with "webpackChunkName" comment', () => {
+      it('should use it', () => {
+        const result = testPlugin(`
+          loadable(() => import(/* webpackChunkName: "ChunkA" */ './ModA'))
+        `);
+
+        expect(result).toMatchSnapshot();
+      });
+    });
   });
 });

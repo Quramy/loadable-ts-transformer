@@ -18,23 +18,52 @@ export function createObjectMethod(name: string, args: string[], block: ts.Block
   );
 }
 
-export function getLeadingComments(node: ts.Node) {
+function visitEachLeadingComments(node: ts.Node, cb: (comment: ts.CommentRange & { text: string }) => void | boolean) {
   const src = node.getSourceFile();
-  const ranges = ts.getLeadingCommentRanges(src.getFullText(), node.pos);
+  // const text = src.getFullText();
+  const text = node.getFullText();
+  const ranges = ts.getLeadingCommentRanges(text, 0);
   if (!ranges) return [] as string[];
   const ret: string[] = [];
   for (const range of ranges) {
-    ret.push(
-      src
-        .getSourceFile()
-        .getFullText()
-        .slice(range.pos, range.end),
-    );
+    const comment = {
+      ...range,
+      text: text.slice(range.pos, range.end),
+    };
+    if (cb(comment) === false) break;
   }
-  return ret.map(comment => {
-    if (comment.startsWith('//')) return comment.slice(2);
-    if (comment.startsWith('/*')) return comment.slice(2, comment.length - 2);
-    throw new Error('Invalid comment');
+  return node;
+}
+
+export function getLeadingComments(node: ts.Node) {
+  const ret: string[] = [];
+  visitEachLeadingComments(node, comment => {
+    if (comment.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
+      ret.push(comment.text.slice(2));
+    } else if (comment.kind == ts.SyntaxKind.MultiLineCommentTrivia) {
+      ret.push(comment.text.slice(2, comment.text.length - 2));
+    }
+  });
+  return ret;
+}
+
+export function removeMatchingLeadingComments(node: ts.Node, ctx: ts.TransformationContext, condition: RegExp) {
+  return visitEachLeadingComments(node, comment => {
+    if (condition.test(comment.text)) {
+      const w = node.getLeadingTriviaWidth();
+      const removeComment = (x: ts.Node): ts.Node => {
+        if (x.getFullStart() === node.getFullStart()) {
+          ts.setTextRange(x, { pos: x.getStart(), end: x.getEnd() });
+        }
+        return ts.visitEachChild(x, removeComment, ctx);
+      };
+      ts.visitEachChild(node, removeComment, ctx);
+      const head = node.getSourceFile().text.slice(0, node.getFullStart());
+      const tail = node.getSourceFile().text.slice(node.getStart());
+      node.getSourceFile().text = head + ''.padStart(w) + tail;
+      ts.setTextRange(node, { pos: node.getStart(), end: node.getEnd() });
+      return false;
+    }
   });
 }
 

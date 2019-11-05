@@ -59,7 +59,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     const obj = ts.createObjectLiteral(
       [
-        chunkNameProperty(callNode),
+        chunkNameProperty({ ctx, callNode, funcNode }),
         isReadyProperty(ctx),
         requireAsyncProperty(funcNode),
         requireSyncProperty(ctx),
