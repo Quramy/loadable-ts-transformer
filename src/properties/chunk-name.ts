@@ -1,6 +1,7 @@
 import vm from 'vm';
 import ts from 'typescript';
-import { getImportArg, getLeadingComments, createObjectMethod } from '../util';
+import { getImportArg, getLeadingComments, removeMatchingLeadingComments, createObjectMethod } from '../util';
+import { CreatePropertyOptions } from './types';
 
 const JS_PATH_REGEXP = /^[./]+|(\.js$)/g;
 const MATCH_LEFT_HYPHENS_REPLACE_REGEX = /^-/g;
@@ -9,7 +10,7 @@ const WEBPACK_CHUNK_NAME_REGEXP = /webpackChunkName/;
 const WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX = /[^a-zA-Z0-9_!§$()=\-^°]+/g;
 const WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX = /^-|-$/g;
 
-function readWebpackCommentValues(str: string) {
+function readWebpackCommentValues(str: string): { webpackChunkName: string } {
   try {
     const values = vm.runInNewContext(`(function(){return {${str}};})()`);
     return values;
@@ -32,7 +33,7 @@ function writeWebpackCommentValues(values: any) {
 function getChunkNameComment(importArg: ts.Node) {
   const comments = getLeadingComments(importArg);
   if (!comments.length) return null;
-  return comments.find(WEBPACK_CHUNK_NAME_REGEXP.test);
+  return comments.find(comment => WEBPACK_CHUNK_NAME_REGEXP.test(comment));
 }
 
 function getRawChunkNameFromCommments(importArg: ts.Node) {
@@ -80,12 +81,14 @@ function isAgressiveImport(callNode: ts.CallExpression) {
   return ts.isTemplateExpression(importArg) && importArg.templateSpans.length > 0;
 }
 
-function addOrReplaceChunkNameComment(callPath: ts.CallExpression, values: any) {
+function addOrReplaceChunkNameComment(callPath: ts.CallExpression, ctx: ts.TransformationContext, values: any) {
   const importArg = getImportArg(callPath);
   // const chunkNameComment = getChunkNameComment(importArg)
   // if (chunkNameComment) {
   //   chunkNameComment.remove()
   // }
+
+  removeMatchingLeadingComments(importArg, ctx, WEBPACK_CHUNK_NAME_REGEXP);
 
   ts.addSyntheticLeadingComment(
     importArg,
@@ -95,14 +98,14 @@ function addOrReplaceChunkNameComment(callPath: ts.CallExpression, values: any) 
   );
 }
 
-function replaceChunkName(callPath: ts.CallExpression) {
+function replaceChunkName({ callNode: callPath, ctx }: CreatePropertyOptions) {
   const agressiveImport = isAgressiveImport(callPath);
   const values = getExistingChunkNameComment(callPath);
 
-  // if (!agressiveImport && values) {
-  //   addOrReplaceChunkNameComment(callPath, values)
-  //   return t.stringLiteral(values.webpackChunkName)
-  // }
+  if (!agressiveImport && values) {
+    addOrReplaceChunkNameComment(callPath, ctx, values);
+    return ts.createStringLiteral(values.webpackChunkName);
+  }
 
   let chunkNameNode = generateChunkNameNode(callPath);
   let webpackChunkName: string;
@@ -114,10 +117,10 @@ function replaceChunkName(callPath: ts.CallExpression) {
   webpackChunkName = chunkNameNode.text;
   // }
 
-  addOrReplaceChunkNameComment(callPath, { webpackChunkName });
+  addOrReplaceChunkNameComment(callPath, ctx, { webpackChunkName });
   return chunkNameNode;
 }
 
-export default function chunkNameProperty(callNode: ts.CallExpression) {
-  return createObjectMethod('chunkName', [], ts.createBlock([ts.createReturn(replaceChunkName(callNode))], true));
+export default function chunkNameProperty(options: CreatePropertyOptions) {
+  return createObjectMethod('chunkName', [], ts.createBlock([ts.createReturn(replaceChunkName(options))], true));
 }
