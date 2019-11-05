@@ -32,6 +32,14 @@ describe('transformer', () => {
 
         expect(result).toMatchSnapshot();
       });
+
+      it('should use it even if comment is separated by ","', () => {
+        const result = testPlugin(`
+          loadable(() => import(/* webpackPrefetch: true, webpackChunkName: "ChunkA" */ './ModA'))
+        `);
+
+        expect(result).toMatchSnapshot();
+      });
     });
   });
 });
