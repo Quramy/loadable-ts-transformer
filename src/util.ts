@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-export function getImportArg(callNode: ts.CallExpression): ts.Node {
+export function getImportArg(callNode: ts.CallExpression): ts.Expression {
   return callNode.arguments[0];
 }
 

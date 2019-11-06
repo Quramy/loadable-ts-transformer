@@ -66,6 +66,105 @@ loadable({
 "
 `;
 
+exports[`transformer simple import should work with * in name 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \\"foo\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => import(/* webpackChunkName: \\"foo\\" */ \`./foo*\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"foo\\" */ \`./foo*\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"foo\\" */ \`./foo*\`);
+    }
+});
+"
+`;
+
+exports[`transformer simple import should work with + concatenation 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return /* webpackChunkName: \\"\\" */ './Mod' + 'A';
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => import(/* webpackChunkName: \\"\\" */ './Mod' + 'A'),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ './Mod' + 'A') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ './Mod' + 'A');
+    }
+});
+"
+`;
+
+exports[`transformer simple import should work with template literal 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \\"ModA\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => import(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`);
+    }
+});
+"
+`;
+
 exports[`transformer simple import with "webpackChunkName" comment should use it 1`] = `
 "function __loadable_isReady__(self, props) {
   if (typeof __webpack_modules__ !== \\"undefined\\") {

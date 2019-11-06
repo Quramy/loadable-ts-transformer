@@ -3,7 +3,12 @@ import { getImportArg, createObjectMethod } from '../util';
 
 function getCallValue(callNode: ts.CallExpression) {
   const importArg = getImportArg(callNode);
-  if (ts.isStringLiteral(importArg) || ts.isTemplateLiteral(importArg) || ts.isTemplateExpression(importArg)) {
+  if (
+    ts.isBinaryExpression(importArg) ||
+    ts.isStringLiteral(importArg) ||
+    ts.isTemplateLiteral(importArg) ||
+    ts.isTemplateExpression(importArg)
+  ) {
     return importArg;
   }
   throw new Error('invalid import argument');

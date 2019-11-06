@@ -50,7 +50,7 @@ function moduleToChunk(str: string) {
     .replace(WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX, '');
 }
 
-function generateChunkNameNode(callPath: ts.CallExpression) {
+function generateChunkNameNode(callPath: ts.CallExpression): ts.Expression {
   const importArg = getImportArg(callPath);
   if (ts.isTemplateExpression(importArg)) {
     throw new Error('not implementd');
@@ -64,14 +64,14 @@ function generateChunkNameNode(callPath: ts.CallExpression) {
     //   ),
     //   importArg.node.expressions,
     // )
-  } else if (ts.isStringLiteral(importArg)) {
-    return ts.createStringLiteral(moduleToChunk(importArg.getText().slice(1, -1)));
+  } else if (ts.isStringLiteral(importArg) || ts.isNoSubstitutionTemplateLiteral(importArg)) {
+    return ts.createStringLiteral(moduleToChunk(importArg.text));
   }
-  throw new Error('not implementd');
+  return importArg;
 }
 
-function getExistingChunkNameComment(callPath: ts.CallExpression) {
-  const importArg = getImportArg(callPath);
+function getExistingChunkNameComment(callNode: ts.CallExpression) {
+  const importArg = getImportArg(callNode);
   const values = getRawChunkNameFromCommments(importArg);
   return values;
 }
@@ -81,12 +81,8 @@ function isAgressiveImport(callNode: ts.CallExpression) {
   return ts.isTemplateExpression(importArg) && importArg.templateSpans.length > 0;
 }
 
-function addOrReplaceChunkNameComment(callPath: ts.CallExpression, ctx: ts.TransformationContext, values: any) {
-  const importArg = getImportArg(callPath);
-  // const chunkNameComment = getChunkNameComment(importArg)
-  // if (chunkNameComment) {
-  //   chunkNameComment.remove()
-  // }
+function addOrReplaceChunkNameComment(callNode: ts.CallExpression, ctx: ts.TransformationContext, values: any) {
+  const importArg = getImportArg(callNode);
 
   removeMatchingLeadingComments(importArg, ctx, WEBPACK_CHUNK_NAME_REGEXP);
 
@@ -98,26 +94,29 @@ function addOrReplaceChunkNameComment(callPath: ts.CallExpression, ctx: ts.Trans
   );
 }
 
-function replaceChunkName({ callNode: callPath, ctx }: CreatePropertyOptions) {
-  const agressiveImport = isAgressiveImport(callPath);
-  const values = getExistingChunkNameComment(callPath);
+function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
+  const agressiveImport = isAgressiveImport(callNode);
+  const values = getExistingChunkNameComment(callNode);
 
   if (!agressiveImport && values) {
-    addOrReplaceChunkNameComment(callPath, ctx, values);
+    addOrReplaceChunkNameComment(callNode, ctx, values);
     return ts.createStringLiteral(values.webpackChunkName);
   }
 
-  let chunkNameNode = generateChunkNameNode(callPath);
+  let chunkNameNode = generateChunkNameNode(callNode);
   let webpackChunkName: string;
 
   // if (t.isTemplateLiteral(chunkNameNode)) {
   //   webpackChunkName = chunkNameFromTemplateLiteral(chunkNameNode)
   //   chunkNameNode = sanitizeChunkNameTemplateLiteral(chunkNameNode)
   // } else {
-  webpackChunkName = chunkNameNode.text;
-  // }
+  if (ts.isStringLiteral(chunkNameNode) || ts.isNoSubstitutionTemplateLiteral(chunkNameNode)) {
+    webpackChunkName = chunkNameNode.text;
+  } else {
+    webpackChunkName = '';
+  }
 
-  addOrReplaceChunkNameComment(callPath, ctx, { webpackChunkName });
+  addOrReplaceChunkNameComment(callNode, ctx, { webpackChunkName });
   return chunkNameNode;
 }
 

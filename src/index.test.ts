@@ -16,6 +16,30 @@ function testPlugin(source: string) {
 
 describe('transformer', () => {
   describe('simple import', () => {
+    it('should work with template literal', () => {
+      const result = testPlugin(`
+        loadable(() => import(\`./ModA\`))
+      `);
+
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should work with + concatenation', () => {
+      const result = testPlugin(`
+        loadable(() => import('./Mod' + 'A'))
+      `);
+
+      expect(result).toMatchSnapshot();
+    });
+
+    it('should work with * in name', () => {
+      const result = testPlugin(`
+        loadable(() => import(\`./foo*\`))
+      `);
+
+      expect(result).toMatchSnapshot();
+    });
+
     it('should transform path into "chunk-friendly" name', () => {
       const result = testPlugin(`
         loadable(() => import('../foo/bar'))

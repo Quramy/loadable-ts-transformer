@@ -39,6 +39,9 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
   function visitNode(node: ts.Node): ts.Node {
     if (!isLoadableNode(node)) return ts.visitEachChild(node, visitNode, ctx);
 
+    const funcNode = getFuncNode(node);
+    if (!funcNode) return node;
+
     // Collect dynamic import call expressions such as `import('./foo')`
     const imports = collectImports(node, ctx);
 
@@ -51,11 +54,6 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
     }
 
     const [callNode] = imports;
-
-    const funcNode = getFuncNode(node);
-    if (!funcNode) {
-      throw new Error('not implemented');
-    }
 
     const obj = ts.createObjectLiteral(
       [
