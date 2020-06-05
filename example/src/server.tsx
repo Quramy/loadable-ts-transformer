@@ -39,7 +39,12 @@ app.get("*", async (req, res) => {
     </StaticRouter>
   );
 
-  const content = renderToString(App);
+  const content = renderToString(
+    extractor.collectChunks(
+      App
+    )
+  );
+
   res.status(200).end(html({ content }));
 });
 
