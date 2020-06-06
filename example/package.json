@@ -24,7 +24,7 @@
     "@types/react-dom": "^16.9.3",
     "@types/react-router-dom": "^5.1.2",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.6.4",
+    "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-merge": "^4.2.2"
