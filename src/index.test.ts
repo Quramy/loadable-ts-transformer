@@ -85,5 +85,15 @@ describe('transformer', () => {
         expect(result).toMatchSnapshot();
       });
     });
+
+    describe('with options', () => {
+      it('should work', () => {
+        const result = testPlugin(`
+          loadable(() => import('./ModA'), { ssr: false }))
+        `);
+
+        expect(result).toMatchSnapshot();
+      });
+    });
   });
 });
