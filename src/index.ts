@@ -65,7 +65,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       ],
       true,
     );
-    return ts.updateCall(node, node.expression, undefined, [obj]);
+    return ts.updateCall(node, node.expression, undefined, [obj, ...node.arguments.slice(1)]);
   }
 
   return (source: ts.SourceFile) => ts.updateSourceFileNode(source, ts.visitNodes(source.statements, visitNode));

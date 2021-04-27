@@ -231,6 +231,39 @@ loadable({
 "
 `;
 
+exports[`transformer simple import with options should work 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \\"ModA\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: () => import(/* webpackChunkName: \\"ModA\\" */ './ModA'),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
+    }
+}, { ssr: false });
+"
+`;
+
 exports[`transformer simple import without "webpackChunkName" comment should add it 1`] = `
 "function __loadable_isReady__(self, props) {
   if (typeof __webpack_modules__ !== \\"undefined\\") {
