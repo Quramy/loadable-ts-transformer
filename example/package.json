@@ -9,7 +9,7 @@
   "dependencies": {
     "@loadable/component": "^5.10.3",
     "@loadable/server": "^5.10.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2"
