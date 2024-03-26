@@ -1,6 +1,6 @@
 {
-  "name": "loadable-transformer-ts5",
-  "version": "1.0.0",
+  "name": "loadable-ts-transformer",
+  "version": "1.0.0-alpha.3",
   "description": "TypeScript custom transformer for lodable-components SSR",
   "main": "lib/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "Plugin",
     "Server Side Rendering"
   ],
-  "author": "Raghav Agrawal",
+  "author": "Yosuke Kurami",
   "license": "MIT",
   "peerDependencies": {
     "typescript": "^5"
