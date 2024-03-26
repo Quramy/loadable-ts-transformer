@@ -1,6 +1,6 @@
 {
   "name": "loadable-transformer-ts5",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript custom transformer for lodable-components SSR",
   "main": "lib/index.js",
   "scripts": {
@@ -10,12 +10,17 @@
     "format:check": "prettier --check \"src/**/*\"",
     "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaghavAgrawal-TUL-Luxury/loadable-transformer-ts5.git"
+  },
   "keywords": [
     "loadble-components",
     "React",
     "TypeScript",
     "Plugin",
-    "Server Side Rendering"
+    "Server Side Rendering",
+    "loadable-ts-transformer"
   ],
   "author": "Raghav Agrawal",
   "license": "MIT",
