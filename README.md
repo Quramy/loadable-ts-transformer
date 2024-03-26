@@ -1,25 +1,26 @@
-![](https://github.com/Quramy/loadable-ts-transformer/workflows/build/badge.svg)
-# loadable-ts-transformer
+# loadable-transformer-ts5
 
-A TypeScript custom transformer for server side rendering with [loadable-components](https://github.com/smooth-code/loadable-components) .
+**Compatible with Typescript V5**
+
+Changes added over [loadable-ts-transformer](https://github.com/Quramy/loadable-ts-transformer)
+
+A TypeScript custom transformer for server side rendering with loadable-components.
 
 ## Usage
-
-First of all, you should read https://www.smooth-code.com/open-source/loadable-components/docs/server-side-rendering/ .
 
 This transformer is an alternative option for ts-loader user. It works as well as `@loadable/babel-plugin` does.
 
 ### Install
 
 ```sh
-$ npm install loadable-ts-transformer ts-loader webpack typescript -D
+$ npm install loadable-transformer-ts5 ts-loader webpack typescript -D
 ```
 
 ### Configure webpack
 
 ```js
 /* webpack.config.js */
-const { loadableTransformer } = require('loadable-ts-transformer');
+const { loadableTransformer } = require('loadable-transformer-ts5');
 
 module.exports = {
     ...
@@ -42,4 +43,5 @@ module.exports = {
 **Remarks** This transformer compiles `import(...)` expression. So you should set tsconfig `--module` option to "ES2015" or "ESNext".
 
 ## License
+
 MIT

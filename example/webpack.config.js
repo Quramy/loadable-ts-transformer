@@ -1,6 +1,6 @@
 const path = require("path");
 
-// const { loadableTransformer } = require('loadable-ts-transformer');
+// const { loadableTransformer } = require('loadable-transformer-ts5');
 const { loadableTransformer } = require('../lib');
 
 module.exports = {
