@@ -5,14 +5,13 @@ export function getImportArg(callNode: ts.CallExpression): ts.Expression {
 }
 
 export function createObjectMethod(name: string, args: string[], block: ts.Block) {
-  return ts.createMethod(
-    [],
+  return ts.factory.createMethodDeclaration(
     [],
     undefined,
     name,
     undefined,
     [],
-    args.map(name => ts.createParameter(undefined, undefined, undefined, name)),
+    args.map(name => ts.factory.createParameterDeclaration(undefined, undefined, name)),
     undefined,
     block,
   );

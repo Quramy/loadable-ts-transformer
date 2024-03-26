@@ -11,22 +11,32 @@ const WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX = /[^a-zA-Z0-9_!§$()=\-^°]+/g;
 const WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX = /^-|-$/g;
 
 function readWebpackCommentValues(str: string): { webpackChunkName: string } {
+  let values;
   try {
-    const values = vm.runInNewContext(`(function(){return {${str}};})()`);
-    return values;
+    values = vm.runInNewContext(`(function(){return {${str}};})()`);
   } catch (e) {
+    if (!(e instanceof Error)) {
+      throw Error(`compilation error while processing: /*${str}*/: ${new Error(e as string).message}`);
+    }
     throw Error(`compilation error while processing: /*${str}*/: ${e.message}`);
+  } finally {
+    return values;
   }
 }
 
-function writeWebpackCommentValues(values: any) {
+function writeWebpackCommentValues(values: any): string {
+  let str = '';
   try {
-    const str = Object.keys(values)
+    str = Object.keys(values)
       .map(key => `${key}: ${JSON.stringify(values[key])}`)
       .join(', ');
-    return ` ${str} `;
   } catch (e) {
+    if (!(e instanceof Error)) {
+      throw Error(`compilation error while processing: /*${values}*/: ${new Error(e as string).message}`);
+    }
     throw Error(`compilation error while processing: /*${values}*/: ${e.message}`);
+  } finally {
+    return ` ${str} `;
   }
 }
 
@@ -65,7 +75,7 @@ function generateChunkNameNode(callPath: ts.CallExpression): ts.Expression {
     //   importArg.node.expressions,
     // )
   } else if (ts.isStringLiteral(importArg) || ts.isNoSubstitutionTemplateLiteral(importArg)) {
-    return ts.createStringLiteral(moduleToChunk(importArg.text));
+    return ts.factory.createStringLiteral(moduleToChunk(importArg.text));
   }
   return importArg;
 }
@@ -100,7 +110,7 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
 
   if (!agressiveImport && values) {
     addOrReplaceChunkNameComment(callNode, ctx, values);
-    return ts.createStringLiteral(values.webpackChunkName);
+    return ts.factory.createStringLiteral(values.webpackChunkName);
   }
 
   let chunkNameNode = generateChunkNameNode(callNode);
@@ -121,5 +131,9 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
 }
 
 export default function chunkNameProperty(options: CreatePropertyOptions) {
-  return createObjectMethod('chunkName', [], ts.createBlock([ts.createReturn(replaceChunkName(options))], true));
+  return createObjectMethod(
+    'chunkName',
+    [],
+    ts.factory.createBlock([ts.factory.createReturnStatement(replaceChunkName(options))], true),
+  );
 }

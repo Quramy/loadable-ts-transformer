@@ -1,4 +1,5 @@
 ![](https://github.com/Quramy/loadable-ts-transformer/workflows/build/badge.svg)
+
 # loadable-ts-transformer
 
 A TypeScript custom transformer for server side rendering with [loadable-components](https://github.com/smooth-code/loadable-components) .
@@ -42,4 +43,5 @@ module.exports = {
 **Remarks** This transformer compiles `import(...)` expression. So you should set tsconfig `--module` option to "ES2015" or "ESNext".
 
 ## License
+
 MIT

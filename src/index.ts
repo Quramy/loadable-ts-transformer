@@ -55,7 +55,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     const [callNode] = imports;
 
-    const obj = ts.createObjectLiteral(
+    const obj = ts.factory.createObjectLiteralExpression(
       [
         chunkNameProperty({ ctx, callNode, funcNode }),
         isReadyProperty(ctx),
@@ -65,8 +65,12 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       ],
       true,
     );
-    return ts.updateCall(node, node.expression, undefined, [obj]);
+    return ts.factory.updateCallExpression(node, node.expression, undefined, [obj]);
   }
 
-  return (source: ts.SourceFile) => ts.updateSourceFileNode(source, ts.visitNodes(source.statements, visitNode));
+  return (source: ts.SourceFile) =>
+    ts.factory.updateSourceFile(
+      source,
+      (ts.visitNodes(source.statements, visitNode) as unknown) as readonly ts.Statement[],
+    );
 }

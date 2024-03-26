@@ -14,12 +14,12 @@ export default function isReadyProperty(ctx: ts.TransformationContext): ts.Objec
   return createObjectMethod(
     'isReady',
     ['props'],
-    ts.createBlock(
+    ts.factory.createBlock(
       [
-        ts.createReturn(
-          ts.createCall(ts.createIdentifier('__loadable_isReady__'), undefined, [
-            ts.createIdentifier('this'),
-            ts.createIdentifier('props'),
+        ts.factory.createReturnStatement(
+          ts.factory.createCallExpression(ts.factory.createIdentifier('__loadable_isReady__'), undefined, [
+            ts.factory.createIdentifier('this'),
+            ts.factory.createIdentifier('props'),
           ]),
         ),
       ],
