@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts, { SyntaxKind } from 'typescript';
 import { getImportArg, createObjectMethod } from '../util';
 
 function getCallValue(callNode: ts.CallExpression) {
@@ -19,14 +19,22 @@ export default function resolveProperty(callNode: ts.CallExpression) {
   return createObjectMethod(
     'resolve',
     [],
-    ts.createBlock(
+    ts.factory.createBlock(
       [
-        ts.createReturn(
-          ts.createConditional(
-            ts.createPropertyAccess(ts.createIdentifier('require'), 'resolveWeak'),
-            ts.createCall(ts.createPropertyAccess(ts.createIdentifier('require'), 'resolveWeak'), undefined, [id]),
-            ts.createCall(
-              ts.createCall(ts.createIdentifier('eval'), undefined, [ts.createStringLiteral('require.resolve')]),
+        ts.factory.createReturnStatement(
+          ts.factory.createConditionalExpression(
+            ts.factory.createPropertyAccessExpression(ts.factory.createIdentifier('require'), 'resolveWeak'),
+            ts.factory.createToken(SyntaxKind.QuestionToken),
+            ts.factory.createCallExpression(
+              ts.factory.createPropertyAccessExpression(ts.factory.createIdentifier('require'), 'resolveWeak'),
+              undefined,
+              [id],
+            ),
+            ts.factory.createToken(SyntaxKind.ColonToken),
+            ts.factory.createCallExpression(
+              ts.factory.createCallExpression(ts.factory.createIdentifier('eval'), undefined, [
+                ts.factory.createStringLiteral('require.resolve'),
+              ]),
               undefined,
               [id],
             ),

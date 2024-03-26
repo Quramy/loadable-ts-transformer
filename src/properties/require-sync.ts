@@ -17,12 +17,12 @@ export default function requireSyncProperty(ctx: ts.TransformationContext): ts.O
   return createObjectMethod(
     'requireSync',
     ['props'],
-    ts.createBlock(
+    ts.factory.createBlock(
       [
-        ts.createReturn(
-          ts.createCall(ts.createIdentifier('__loadable_requireSync__'), undefined, [
-            ts.createIdentifier('this'),
-            ts.createIdentifier('props'),
+        ts.factory.createReturnStatement(
+          ts.factory.createCallExpression(ts.factory.createIdentifier('__loadable_requireSync__'), undefined, [
+            ts.factory.createIdentifier('this'),
+            ts.factory.createIdentifier('props'),
           ]),
         ),
       ],
